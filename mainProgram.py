@@ -39,14 +39,14 @@ def main():
     similarity = util.pytorch_cos_sim(cv_embedding, job_embedding).item()
     score = round(similarity * 100, 2)
 
-    print(f"\n🧠 Matchningspoäng: {score} / 100")
+    print(f"\n Matchningspoäng: {score} / 100")
 
     if score >= 75:
-        print("✅ CV:t matchar mycket bra med jobbannonsen.")
+        print("CV:t matchar mycket bra med jobbannonsen.")
     elif score >= 50:
-        print("➖ Viss matchning finns – kan vara relevant kandidat.")
+        print("Viss matchning finns – kan vara relevant kandidat.")
     else:
-        print("❌ Låg matchning – rekommenderas ej för denna roll.")
+        print("Låg matchning – rekommenderas ej för denna roll.")
 
 if __name__ == "__main__":
     main()
