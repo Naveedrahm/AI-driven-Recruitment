@@ -22,7 +22,7 @@ def keyword_match_score(text_section, keywords):
 with open('jobDescription.txt', 'r', encoding='utf-8') as f:
     jd_text = f.read().lower()
 
-# Define keywords manually or extract common terms
+#Defined the words for looking
 required_skills = ['python', 'excel', 'data visualization', 'machine learning']
 preferred_education = ['engineering', 'computer science', 'environmental science']
 desired_experience = ['internship', 'project', 'reporting', 'sustainability']
@@ -52,8 +52,16 @@ for filename in os.listdir(resumes_folder):
             "experience_score": exp_score,
             "total_score": total
         })
-
+with open('results/scores.txt', 'w', encoding='UTF-8') as txt_file:    
+    for row in results:
+        txt_file.write(
+            f"{row['filename']} - Skill: {row['skill_score']}, "
+            f"Education: {row['education_score']}, "
+            f"Experience: {row['experience_score']}, "
+            f"Total: {row['total_score']}\n"
+        )
 # Save results
+os.makedirs('results', exist_ok=True)
 df = pd.DataFrame(results)
 df.to_csv('results/scores.csv', index=False)
 print("Done! Scores saved to results/scores.csv.")

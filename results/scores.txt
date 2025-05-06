@@ -1,0 +1,3 @@
+resume1.txt - Skill: 2, Education: 2, Experience: 4, Total: 8
+resume2.txt - Skill: 2, Education: 2, Experience: 4, Total: 8
+resume3.txt - Skill: 1, Education: 1, Experience: 0, Total: 2

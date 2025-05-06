@@ -1,0 +1,11 @@
+Name: Sara Andersson 
+Program: Computer Science Engineering
+
+Skills:  
+Python, Java, C, Prolog, MATLAB
+
+Education:  
+BSc in Computer Science  
+MSc in Machine Learning, KTH  
+
+Experience:  
