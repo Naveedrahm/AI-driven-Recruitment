@@ -1,0 +1,13 @@
+Name: Sara Andersson 
+Program: Sustainable Energy Engineering  
+
+Skills:  
+Python, MATLAB, data visualization, climate modeling  
+
+Education:  
+BSc in Environmental Science  
+MSc in Sustainable Energy Engineering, KTH  
+
+Experience:  
+Internship at Vattenfall working on carbon footprint reporting  
+Course project on sustainability analytics

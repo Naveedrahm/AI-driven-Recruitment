@@ -1,52 +1,60 @@
-import fitz  # PyMuPDF
-from sentence_transformers import SentenceTransformer, util
 import os
+import pandas as pd
+import re
 
-def extract_text_from_pdf(file_path):
-    with fitz.open(file_path) as doc:
-        text = ''
-        for page in doc:
-            text += page.get_text()
-        return text
+# Helpers to extract sections
+def extract_section(text, section_name):
+    pattern = rf"{section_name}:(.*?)(\n[A-Z][a-z]+:|$)"
+    match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
+    return match.group(1).strip().lower() if match else ""
 
-def read_cv(file_path):
-    ext = os.path.splitext(file_path)[1].lower()
-    if ext == ".pdf":
-        return extract_text_from_pdf(file_path)
-    elif ext == ".txt":
-        with open(file_path, "r", encoding="utf-8") as f:
-            return f.read()
-    else:
-        raise ValueError("Endast PDF eller TXT-filer stöds just nu.")
+# Simple keyword match function
+def keyword_match_score(text_section, keywords):
+    if not text_section:
+        return 0
+    score = 0
+    for kw in keywords:
+        if kw in text_section:
+            score += 1
+    return min(score, 10)
 
-def main():
-    # Ladda jobbannons
-    with open("job_description.txt", "r", encoding="utf-8") as f:
-        job_text = f.read()
+# Load job description
+with open('jobDescription.txt', 'r', encoding='utf-8') as f:
+    jd_text = f.read().lower()
 
-    # Ladda CV (byt ut med rätt filnamn)
-    cv_path = input("Ange sökväg till CV (PDF eller TXT): ")
-    cv_text = read_cv(cv_path)
+# Define keywords manually or extract common terms
+required_skills = ['python', 'excel', 'data visualization', 'machine learning']
+preferred_education = ['engineering', 'computer science', 'environmental science']
+desired_experience = ['internship', 'project', 'reporting', 'sustainability']
 
-    # Initiera BERT-modellen
-    model = SentenceTransformer('all-MiniLM-L6-v2')
+# Process resumes
+resumes_folder = 'resumes'
+results = []
 
-    # Skapa vektorrepresentationer
-    job_embedding = model.encode(job_text, convert_to_tensor=True)
-    cv_embedding = model.encode(cv_text, convert_to_tensor=True)
+for filename in os.listdir(resumes_folder):
+    if filename.endswith('.txt'):
+        with open(os.path.join(resumes_folder, filename), 'r', encoding='utf-8') as f:
+            text = f.read().lower()
 
-    # Beräkna likhet
-    similarity = util.pytorch_cos_sim(cv_embedding, job_embedding).item()
-    score = round(similarity * 100, 2)
+        skills_text = extract_section(text, 'skills')
+        education_text = extract_section(text, 'education')
+        experience_text = extract_section(text, 'experience')
 
-    print(f"\n Matchningspoäng: {score} / 100")
+        skill_score = keyword_match_score(skills_text, required_skills)
+        edu_score = keyword_match_score(education_text, preferred_education)
+        exp_score = keyword_match_score(experience_text, desired_experience)
+        total = skill_score + edu_score + exp_score
 
-    if score >= 75:
-        print("CV:t matchar mycket bra med jobbannonsen.")
-    elif score >= 50:
-        print("Viss matchning finns – kan vara relevant kandidat.")
-    else:
-        print("Låg matchning – rekommenderas ej för denna roll.")
+        results.append({
+            "filename": filename,
+            "skill_score": skill_score,
+            "education_score": edu_score,
+            "experience_score": exp_score,
+            "total_score": total
+        })
 
-if __name__ == "__main__":
-    main()
+# Save results
+df = pd.DataFrame(results)
+df.to_csv('results/scores.csv', index=False)
+print("Done! Scores saved to results/scores.csv.")
+

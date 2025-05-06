@@ -1,0 +1,3 @@
+We are hiring a Data Analyst Intern to work on sustainability-related projects.
+Required skills: Python, Excel, data visualization, basic machine learning.
+Preferred: Background in sustainability, engineering, or environmental science.
